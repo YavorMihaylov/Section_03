@@ -1,0 +1,21 @@
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+.vs
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+#Unreal generated files
+*/Binaries
+*/Build
+*/DerivedDataCache
+*/Intermediate/
+*/Saved/
+*.VC.db
+
