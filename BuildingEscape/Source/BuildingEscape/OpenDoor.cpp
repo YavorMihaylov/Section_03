@@ -22,20 +22,18 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+	// ...
+	
+}
+
+void UOpenDoor::OpenDoor()
+{
 	AActor *Owner = GetOwner();
 
 	FRotator NewRotation = FRotator(0.0f, 90.0f, 0.0f);
 
 	Owner->SetActorRotation(NewRotation);
-
-	
-	//FString OwnerName = GetOwner()->GetName();
-
-	//UE_LOG(LogTemp, Warning, TEXT("%s rotation is %s"), *OwnerName, *OwnerRotation.ToString());
-	
-
-	// ...
-	
 }
 
 
@@ -44,6 +42,12 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	//poll every frame
+	//if Actor that opens is in the trigger 
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	{
+		OpenDoor();
+	}
 	// ...
 }
 
