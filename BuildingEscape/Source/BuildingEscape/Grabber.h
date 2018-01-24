@@ -24,6 +24,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+private:
+
+	//How far the player can reach an object
+	UPROPERTY(EditAnywhere)
+	float ReachDistance = 100.f;
+
 		
 	
 };
