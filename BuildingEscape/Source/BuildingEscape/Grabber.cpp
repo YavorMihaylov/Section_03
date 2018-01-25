@@ -36,17 +36,30 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerLoc,PlayerRot);
 
-	UE_LOG(LogTemp, Warning, TEXT("LineTraceDirection vector output = %s"), *PlayerRot.Vector().ToString())
-
 	FVector LineTraceEnd = PlayerLoc + (PlayerRot.Vector() * ReachDistance);
 
+	///Draw a red trace representing the players reach
 	DrawDebugLine(GetWorld(),PlayerLoc,LineTraceEnd,FColor(255, 0, 0), false, 0.f, 0, 5.f);
 	
-	//Draw a red trance for the vector
+	///Set up query parameter for the ray cast
+	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
 
-	//Ray-cast out to reach distance
+	///Ray-cast out to reach distance
+	FHitResult Hit;
+	GetWorld()->LineTraceSingleByObjectType(Hit, PlayerLoc, LineTraceEnd, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), TraceParams);
 
-	//See what is hit
+	AActor *ActorHit = Hit.GetActor();
+
+	///Debug text of what Hit contains
+	if (ActorHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Object Hit is %s"), *ActorHit->GetName())
+	}
+	
+
+	
+	
+	///See what is hit
 
 	// ...
 }
