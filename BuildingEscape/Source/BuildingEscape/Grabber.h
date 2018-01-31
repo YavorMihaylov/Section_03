@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Grabber.generated.h"
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -29,6 +31,8 @@ private:
 	//How far the player can reach an object
 	UPROPERTY(EditAnywhere)
 	float ReachDistance = 100.f;
+
+	UPhysicsHandleComponent *PhysicsHandle = nullptr;
 
 		
 	
