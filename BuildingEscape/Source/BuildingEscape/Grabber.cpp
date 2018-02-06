@@ -2,6 +2,7 @@
 
 #include "Grabber.h"
 #include "Engine/World.h"
+#include "Components/PrimitiveComponent.h"
 #include "DrawDebugHelpers.h"
 
 
@@ -11,7 +12,6 @@ UGrabber::UGrabber()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
 	
@@ -67,10 +67,18 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab key pressed"));
 
 	///Line Trace and see if we reach any actors with physics body collision channel set
-	GetFirstPhysicsBodyInReach();
+	FHitResult HitResult = GetFirstPhysicsBodyInReach();
+	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
+	AActor* ActorHit = HitResult.GetActor();
 
-	///If hit attache physics handle 
-	//TODO Attach physics handle
+	///If hit attach physics handle 
+	if (ActorHit)
+	{
+		PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(), true /*allow rotation*/);
+	}
+
+	//Attach physics handle
+	
 }
 
 void UGrabber::Release()
@@ -78,6 +86,8 @@ void UGrabber::Release()
 	UE_LOG(LogTemp, Warning, TEXT("Grab key released"));
 
 	//TODO Release physics handle
+	PhysicsHandle->ReleaseComponent();
+
 }
 
 
@@ -86,10 +96,20 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	//TODO This must become a function that sets the linetraceend because UGLY
+	FRotator PlayerRot;
+	FVector PlayerLoc;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerLoc, PlayerRot);
+
+	FVector LineTraceEnd = PlayerLoc + (PlayerRot.Vector() * ReachDistance);
+
 	//if the physics handle is attached 
+	if (PhysicsHandle->GrabbedComponent)
+	{
 		//move the object we are holding each frame
-
-
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 		
 	///See what is hit
 
@@ -124,6 +144,6 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		UE_LOG(LogTemp, Warning, TEXT("Object Hit is %s"), *ActorHit->GetName())
 	}
 
-	return FHitResult(Hit);
+	return Hit;
 }
 
