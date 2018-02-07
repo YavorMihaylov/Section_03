@@ -43,7 +43,11 @@ private:
 
 	float LastDoorOpenTime;
 
-	AActor *ActorThatOpens;
+	UPROPERTY(EditAnywhere)
+	float TriggerMass = 30;
+
 	AActor *Owner; //the affected door
+
+	float GetTotalMassInTrigger();
 
 };

@@ -3,6 +3,7 @@
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/TriggerVolume.h"
 
 
@@ -23,11 +24,7 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-	
 	Owner = GetOwner();
-
 	IsDoorOpen = false;
 	// ...
 	
@@ -46,8 +43,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	//poll every frame
-	//if Actor that opens is in the trigger 
-	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	if (GetTotalMassInTrigger() > TriggerMass)
 	{
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
@@ -70,3 +66,18 @@ void UOpenDoor::CloseDoor()
 	IsDoorOpen = false;
 }
 
+float UOpenDoor::GetTotalMassInTrigger()
+{
+	float totalmass = 0.f;
+
+	TArray<AActor*> OverlapingActors;
+	PressurePlate->GetOverlappingActors(OverlapingActors);
+
+	for (const auto* Actr : OverlapingActors)
+	{
+		totalmass += Actr->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("Object in trigger zone %d with mass %f"), *Actr->GetName(), totalmass)
+	}
+
+	return totalmass;
+}
