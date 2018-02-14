@@ -25,7 +25,7 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	Owner = GetOwner();
-	if (!PressurePlate) { UE_LOG(LogTemp, Error, TEXT("Preassure Plate not attached in %s"), *GetOwner->GetName()) return; };
+	if (!PressurePlate) { UE_LOG(LogTemp, Error, TEXT("Preassure Plate not attached in %s"), *Owner->GetName()) return; };
 	IsDoorOpen = false;
 	// ...
 	
@@ -33,8 +33,8 @@ void UOpenDoor::BeginPlay()
 
 void UOpenDoor::OpenDoor()
 {
-	if (Owner == nullptr) { return; }
-	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	//Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	OnOpenRequest.Broadcast();
 	IsDoorOpen = true;
 }
 
@@ -49,17 +49,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	{
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-		
 	}
 
 
 	if (GetWorld()->GetTimeSeconds() > (DoorCloseDelay + LastDoorOpenTime))//Check if the door was opened longer that the close delay
 	{
 		CloseDoor();
-		
 	}
-	
-	// ...
 }
 
 void UOpenDoor::CloseDoor()
