@@ -25,6 +25,7 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	Owner = GetOwner();
+	if (!PressurePlate) { UE_LOG(LogTemp, Error, TEXT("Preassure Plate not attached in %s"), *GetOwner->GetName()) return; };
 	IsDoorOpen = false;
 	// ...
 	
@@ -32,6 +33,7 @@ void UOpenDoor::BeginPlay()
 
 void UOpenDoor::OpenDoor()
 {
+	if (Owner == nullptr) { return; }
 	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
 	IsDoorOpen = true;
 }
@@ -62,6 +64,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UOpenDoor::CloseDoor()
 {
+	if (!Owner) { return; };
 	Owner->SetActorRotation(FRotator(0.0f, 0.f, 0.0f));
 	IsDoorOpen = false;
 }
@@ -71,6 +74,7 @@ float UOpenDoor::GetTotalMassInTrigger()
 	float totalmass = 0.f;
 
 	TArray<AActor*> OverlapingActors;
+	if (!PressurePlate) { return totalmass; };
 	PressurePlate->GetOverlappingActors(OverlapingActors);
 
 	for (const auto* Actr : OverlapingActors)
