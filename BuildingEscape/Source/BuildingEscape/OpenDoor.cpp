@@ -31,13 +31,6 @@ void UOpenDoor::BeginPlay()
 	
 }
 
-void UOpenDoor::OpenDoor()
-{
-	//Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	OnOpenRequest.Broadcast();
-	IsDoorOpen = true;
-}
-
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -47,22 +40,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	//poll every frame
 	if (GetTotalMassInTrigger() > TriggerMass)
 	{
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
 	}
-
-
-	if (GetWorld()->GetTimeSeconds() > (DoorCloseDelay + LastDoorOpenTime))//Check if the door was opened longer that the close delay
+	else
 	{
-		CloseDoor();
+		//TODO Write a broadcast to close the door
+		OnClose.Broadcast();
 	}
-}
-
-void UOpenDoor::CloseDoor()
-{
-	if (!Owner) { return; };
-	Owner->SetActorRotation(FRotator(0.0f, 0.f, 0.0f));
-	IsDoorOpen = false;
 }
 
 float UOpenDoor::GetTotalMassInTrigger()
